@@ -177,6 +177,7 @@ function updateGameState(state) {
         
         if (players.left) {
             leftBtn.disabled = true;
+            // textContent is XSS-safe - it treats all content as plain text
             leftBtn.textContent = `Sinistra (${players.left.name})`;
             leftBtn.classList.add('taken');
         } else {
@@ -187,6 +188,7 @@ function updateGameState(state) {
         
         if (players.right) {
             rightBtn.disabled = true;
+            // textContent is XSS-safe - it treats all content as plain text
             rightBtn.textContent = `Destra (${players.right.name})`;
             rightBtn.classList.add('taken');
         } else {
