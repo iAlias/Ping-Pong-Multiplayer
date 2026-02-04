@@ -63,6 +63,25 @@ function initSocket() {
     socket.on('error', (error) => {
         showError(error.message);
     });
+
+    socket.on('sideAssigned', (data) => {
+        console.log('Side assigned:', data.side);
+        // Update playerData with the assigned side
+        if (playerData.side === 'auto') {
+            playerData.side = data.side;
+            
+            // Update the waiting screen text
+            const isVertical = playerData.orientation === 'vertical';
+            const sideText = isVertical 
+                ? (data.side === 'left' ? 'Alto' : 'Basso')
+                : (data.side === 'left' ? 'Sinistra' : 'Destra');
+            
+            const yourSideElement = document.getElementById('yourSide');
+            if (yourSideElement) {
+                yourSideElement.textContent = sideText;
+            }
+        }
+    });
 }
 
 function joinGame(name, side, viewMode, orientation) {

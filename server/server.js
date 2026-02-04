@@ -98,6 +98,9 @@ io.on('connection', (socket) => {
     playerCount++;
     console.log(`Player ${name} joined as ${side}. Total players: ${playerCount}`);
 
+    // Send assigned side to the player who just joined
+    socket.emit('sideAssigned', { side: side });
+
     // Broadcast updated game state
     io.emit('gameState', gameState);
 

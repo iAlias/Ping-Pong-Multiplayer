@@ -248,25 +248,6 @@ function updateGameState(state) {
         playerData.orientation = state.orientation;
     }
     
-    // If side was auto-assigned, detect which side we got
-    if (playerData.side === 'auto') {
-        // Find our player by socket ID (we need to check both sides)
-        if (players.left && players.left.name === playerData.name) {
-            playerData.side = 'left';
-        } else if (players.right && players.right.name === playerData.name) {
-            playerData.side = 'right';
-        }
-        
-        // Update the waiting screen text if we're on it
-        if (screens.waiting.classList.contains('active') && playerData.side !== 'auto') {
-            const isVertical = playerData.orientation === 'vertical';
-            const sideText = isVertical 
-                ? (playerData.side === 'left' ? 'Alto' : 'Basso')
-                : (playerData.side === 'left' ? 'Sinistra' : 'Destra');
-            document.getElementById('yourSide').textContent = sideText;
-        }
-    }
-    
     // Update side buttons to disable taken sides (only in lobby)
     if (screens.lobby.classList.contains('active')) {
         const leftBtn = document.querySelector('.side-btn[data-side="left"]');
