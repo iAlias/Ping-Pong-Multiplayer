@@ -47,7 +47,8 @@ let gameState = {
   },
   gameStarted: false,
   gameEnded: false,
-  winner: null
+  winner: null,
+  orientation: 'horizontal' // 'horizontal' or 'vertical'
 };
 
 let playerCount = 0;
@@ -61,7 +62,7 @@ io.on('connection', (socket) => {
 
   // Handle player join
   socket.on('joinGame', (data) => {
-    const { name, side } = data;
+    const { name, side, orientation } = data;
 
     // Check if side is already taken
     if (gameState.players[side]) {
@@ -75,6 +76,11 @@ io.on('connection', (socket) => {
       side: side,
       paddleY: 0.5
     };
+
+    // Set orientation from first player
+    if (playerCount === 0 && orientation) {
+      gameState.orientation = orientation;
+    }
 
     playerCount++;
     console.log(`Player ${name} joined as ${side}. Total players: ${playerCount}`);
@@ -127,6 +133,7 @@ io.on('connection', (socket) => {
       gameState.gameStarted = false;
       gameState.gameEnded = true;
       gameState.ball = { x: 0.5, y: 0.5, vx: BALL_INITIAL_SPEED, vy: BALL_INITIAL_SPEED, speed: 1 };
+      gameState.orientation = 'horizontal'; // Reset orientation
       io.emit('playerLeft');
     }
 
@@ -226,7 +233,7 @@ function resetBall() {
     y: 0.5,
     vx: (Math.random() > 0.5 ? BALL_INITIAL_SPEED : -BALL_INITIAL_SPEED),
     vy: (Math.random() - 0.5) * BALL_INITIAL_SPEED,
-    speed: gameState.ball.speed * BALL_SPEED_INCREASE_FACTOR // Increase speed slightly
+    speed: 1 // Keep speed constant
   };
 }
 

@@ -4,7 +4,8 @@ let socket;
 let playerData = {
     name: '',
     side: null,
-    viewMode: 'full' // 'full' or 'half'
+    viewMode: 'full', // 'full' or 'half'
+    orientation: 'horizontal' // 'horizontal' or 'vertical'
 };
 
 function initSocket() {
@@ -64,16 +65,20 @@ function initSocket() {
     });
 }
 
-function joinGame(name, side, viewMode) {
+function joinGame(name, side, viewMode, orientation) {
     playerData.name = name;
     playerData.side = side;
     playerData.viewMode = viewMode;
+    playerData.orientation = orientation;
     
-    socket.emit('joinGame', { name, side });
+    socket.emit('joinGame', { name, side, orientation });
     
     showScreen('waiting');
     document.getElementById('yourName').textContent = name;
-    document.getElementById('yourSide').textContent = side === 'left' ? 'Sinistra' : 'Destra';
+    const sideText = orientation === 'vertical' 
+        ? (side === 'left' ? 'Alto' : 'Basso')
+        : (side === 'left' ? 'Sinistra' : 'Destra');
+    document.getElementById('yourSide').textContent = sideText;
 }
 
 function movePaddle(paddleY) {

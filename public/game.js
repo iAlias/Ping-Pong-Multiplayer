@@ -34,17 +34,47 @@ function initLobby() {
     const joinBtn = document.getElementById('joinBtn');
     const sideBtns = document.querySelectorAll('.side-btn');
     const viewBtns = document.querySelectorAll('.view-btn');
+    const orientationBtns = document.querySelectorAll('.orientation-btn');
     const replayBtn = document.getElementById('replayBtn');
     
     let selectedSide = null;
     let selectedView = 'full';
+    let selectedOrientation = 'horizontal';
     
     // Enable join button when name and side are selected
     function updateJoinButton() {
         joinBtn.disabled = !playerNameInput.value.trim() || !selectedSide;
     }
     
+    // Update side button labels based on orientation
+    function updateSideLabels() {
+        const sideGroup = document.getElementById('sideGroup');
+        const label = sideGroup.querySelector('label');
+        const leftBtn = document.querySelector('.side-btn[data-side="left"]');
+        const rightBtn = document.querySelector('.side-btn[data-side="right"]');
+        
+        if (selectedOrientation === 'vertical') {
+            label.textContent = 'Scegli la tua posizione:';
+            leftBtn.textContent = 'Alto';
+            rightBtn.textContent = 'Basso';
+        } else {
+            label.textContent = 'Scegli il tuo lato:';
+            leftBtn.textContent = 'Sinistra';
+            rightBtn.textContent = 'Destra';
+        }
+    }
+    
     playerNameInput.addEventListener('input', updateJoinButton);
+    
+    // Orientation selection
+    orientationBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            orientationBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedOrientation = btn.dataset.orientation;
+            updateSideLabels();
+        });
+    });
     
     // Side selection
     sideBtns.forEach(btn => {
@@ -69,7 +99,7 @@ function initLobby() {
     joinBtn.addEventListener('click', () => {
         const name = playerNameInput.value.trim();
         if (name && selectedSide) {
-            joinGame(name, selectedSide, selectedView);
+            joinGame(name, selectedSide, selectedView, selectedOrientation);
         }
     });
     
@@ -106,28 +136,40 @@ function setupTouchControls() {
     const touchArea = document.getElementById('touchArea');
     let isDragging = false;
     
-    function handleMove(clientY) {
+    function handleMove(clientX, clientY) {
         if (!gameActive) return;
         
         const rect = canvas.getBoundingClientRect();
-        const relativeY = (clientY - rect.top) / rect.height;
-        const clampedY = Math.max(PADDLE_HEIGHT / 2, Math.min(1 - PADDLE_HEIGHT / 2, relativeY));
+        const isVertical = playerData.orientation === 'vertical';
         
-        myPaddle.y = clampedY;
-        movePaddle(clampedY);
+        if (isVertical) {
+            // In vertical mode, move paddle left-right based on X position
+            const relativeX = (clientX - rect.left) / rect.width;
+            const clampedX = Math.max(PADDLE_HEIGHT / 2, Math.min(1 - PADDLE_HEIGHT / 2, relativeX));
+            
+            myPaddle.y = clampedX; // Store as Y but represents X position in vertical mode
+            movePaddle(clampedX);
+        } else {
+            // In horizontal mode, move paddle up-down based on Y position
+            const relativeY = (clientY - rect.top) / rect.height;
+            const clampedY = Math.max(PADDLE_HEIGHT / 2, Math.min(1 - PADDLE_HEIGHT / 2, relativeY));
+            
+            myPaddle.y = clampedY;
+            movePaddle(clampedY);
+        }
     }
     
     // Touch events
     touchArea.addEventListener('touchstart', (e) => {
         e.preventDefault();
         isDragging = true;
-        handleMove(e.touches[0].clientY);
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
     });
     
     touchArea.addEventListener('touchmove', (e) => {
         e.preventDefault();
         if (isDragging) {
-            handleMove(e.touches[0].clientY);
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
         }
     });
     
@@ -139,12 +181,12 @@ function setupTouchControls() {
     // Mouse events (for desktop testing)
     touchArea.addEventListener('mousedown', (e) => {
         isDragging = true;
-        handleMove(e.clientY);
+        handleMove(e.clientX, e.clientY);
     });
     
     touchArea.addEventListener('mousemove', (e) => {
         if (isDragging) {
-            handleMove(e.clientY);
+            handleMove(e.clientX, e.clientY);
         }
     });
     
@@ -174,30 +216,39 @@ function updateGameState(state) {
     players = state.players;
     score = state.score;
     
+    // Update orientation from game state
+    if (state.orientation && !playerData.orientation) {
+        playerData.orientation = state.orientation;
+    }
+    
     // Update side buttons to disable taken sides (only in lobby)
     if (screens.lobby.classList.contains('active')) {
         const leftBtn = document.querySelector('.side-btn[data-side="left"]');
         const rightBtn = document.querySelector('.side-btn[data-side="right"]');
         
+        const isVertical = state.orientation === 'vertical';
+        
         if (players.left) {
             leftBtn.disabled = true;
+            const sideText = isVertical ? 'Alto' : 'Sinistra';
             // textContent is XSS-safe - it treats all content as plain text
-            leftBtn.textContent = `Sinistra (${players.left.name})`;
+            leftBtn.textContent = `${sideText} (${players.left.name})`;
             leftBtn.classList.add('taken');
         } else {
             leftBtn.disabled = false;
-            leftBtn.textContent = 'Sinistra';
+            leftBtn.textContent = isVertical ? 'Alto' : 'Sinistra';
             leftBtn.classList.remove('taken');
         }
         
         if (players.right) {
             rightBtn.disabled = true;
+            const sideText = isVertical ? 'Basso' : 'Destra';
             // textContent is XSS-safe - it treats all content as plain text
-            rightBtn.textContent = `Destra (${players.right.name})`;
+            rightBtn.textContent = `${sideText} (${players.right.name})`;
             rightBtn.classList.add('taken');
         } else {
             rightBtn.disabled = false;
-            rightBtn.textContent = 'Destra';
+            rightBtn.textContent = isVertical ? 'Basso' : 'Destra';
             rightBtn.classList.remove('taken');
         }
     }
@@ -263,80 +314,150 @@ function render() {
     const height = rect.height;
     
     // Clear canvas
-    ctx.fillStyle = '#0f0f1e';
+    ctx.fillStyle = '#0a0e27';
     ctx.fillRect(0, 0, width, height);
     
-    // Determine what to render based on view mode
+    // Determine what to render based on view mode and orientation
     const isHalfView = playerData.viewMode === 'half';
     const isLeftPlayer = playerData.side === 'left';
+    const isVertical = playerData.orientation === 'vertical';
     
     let offsetX = 0;
+    let offsetY = 0;
     let scaleX = 1;
+    let scaleY = 1;
     
-    if (isHalfView) {
-        // Show only player's half
+    if (isHalfView && !isVertical) {
+        // Show only player's half (horizontal mode)
         scaleX = 2;
         offsetX = isLeftPlayer ? 0 : -width;
+    } else if (isHalfView && isVertical) {
+        // Show only player's half (vertical mode)
+        scaleY = 2;
+        offsetY = isLeftPlayer ? 0 : -height;
     }
     
     ctx.save();
-    ctx.translate(offsetX, 0);
+    ctx.translate(offsetX, offsetY);
     
-    // Draw center line (dashed)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.setLineDash([10, 10]);
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    
-    // Draw paddles
-    const paddleWidth = PADDLE_WIDTH * width * scaleX;
-    const paddleHeight = PADDLE_HEIGHT * height;
-    
-    // Left paddle
-    if (!isHalfView || isLeftPlayer) {
-        const leftPaddleY = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * height;
-        ctx.fillStyle = '#4ecca3';
-        ctx.fillRect(
-            10 * scaleX,
-            leftPaddleY - paddleHeight / 2,
-            paddleWidth,
-            paddleHeight
-        );
+    if (isVertical) {
+        // VERTICAL MODE - Players at bottom facing each other
+        // Draw horizontal center line (dashed)
+        ctx.strokeStyle = 'rgba(78, 204, 163, 0.3)';
+        ctx.setLineDash([10, 10]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, height / 2);
+        ctx.lineTo(width, height / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Draw paddles (horizontal in vertical mode)
+        const paddleWidth = PADDLE_HEIGHT * width; // Swap dimensions
+        const paddleHeight = PADDLE_WIDTH * height * scaleY;
+        
+        // Top paddle (left player, rotated 180 degrees at bottom)
+        if (!isHalfView || isLeftPlayer) {
+            const topPaddleX = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * width;
+            ctx.fillStyle = '#4ecca3';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#4ecca3';
+            ctx.fillRect(
+                topPaddleX - paddleWidth / 2,
+                10 * scaleY,
+                paddleWidth,
+                paddleHeight
+            );
+            ctx.shadowBlur = 0;
+        }
+        
+        // Bottom paddle (right player, at bottom)
+        if (!isHalfView || !isLeftPlayer) {
+            const bottomPaddleX = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * width;
+            ctx.fillStyle = '#f093fb';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#f093fb';
+            ctx.fillRect(
+                bottomPaddleX - paddleWidth / 2,
+                (height - 10) * scaleY - paddleHeight,
+                paddleWidth,
+                paddleHeight
+            );
+            ctx.shadowBlur = 0;
+        }
+        
+        // Draw ball
+        const ballX = ball.y * width; // Swap X and Y for vertical mode
+        const ballY = ball.x * height * scaleY;
+        const ballRadius = BALL_SIZE * width;
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+    } else {
+        // HORIZONTAL MODE - Traditional left-right
+        // Draw center line (dashed)
+        ctx.strokeStyle = 'rgba(78, 204, 163, 0.3)';
+        ctx.setLineDash([10, 10]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(width / 2, 0);
+        ctx.lineTo(width / 2, height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Draw paddles
+        const paddleWidth = PADDLE_WIDTH * width * scaleX;
+        const paddleHeight = PADDLE_HEIGHT * height;
+        
+        // Left paddle
+        if (!isHalfView || isLeftPlayer) {
+            const leftPaddleY = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * height;
+            ctx.fillStyle = '#4ecca3';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#4ecca3';
+            ctx.fillRect(
+                10 * scaleX,
+                leftPaddleY - paddleHeight / 2,
+                paddleWidth,
+                paddleHeight
+            );
+            ctx.shadowBlur = 0;
+        }
+        
+        // Right paddle
+        if (!isHalfView || !isLeftPlayer) {
+            const rightPaddleY = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * height;
+            ctx.fillStyle = '#f093fb';
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#f093fb';
+            ctx.fillRect(
+                (width - 10) * scaleX - paddleWidth,
+                rightPaddleY - paddleHeight / 2,
+                paddleWidth,
+                paddleHeight
+            );
+            ctx.shadowBlur = 0;
+        }
+        
+        // Draw ball
+        const ballX = ball.x * width * scaleX;
+        const ballY = ball.y * height;
+        const ballRadius = BALL_SIZE * width * scaleX;
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
     }
-    
-    // Right paddle
-    if (!isHalfView || !isLeftPlayer) {
-        const rightPaddleY = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * height;
-        ctx.fillStyle = '#f093fb';
-        ctx.fillRect(
-            (width - 10) * scaleX - paddleWidth,
-            rightPaddleY - paddleHeight / 2,
-            paddleWidth,
-            paddleHeight
-        );
-    }
-    
-    // Draw ball
-    const ballX = ball.x * width * scaleX;
-    const ballY = ball.y * height;
-    const ballRadius = BALL_SIZE * width * scaleX;
-    
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Add glow effect to ball
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
     
     ctx.restore();
 }
