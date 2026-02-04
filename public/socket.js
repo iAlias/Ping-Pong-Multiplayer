@@ -4,7 +4,8 @@ let socket;
 let playerData = {
     name: '',
     side: null,
-    viewMode: 'full' // 'full' or 'half'
+    viewMode: 'full', // 'full' or 'half'
+    orientation: 'horizontal' // 'horizontal' or 'vertical'
 };
 
 function initSocket() {
@@ -62,18 +63,47 @@ function initSocket() {
     socket.on('error', (error) => {
         showError(error.message);
     });
+
+    socket.on('sideAssigned', (data) => {
+        console.log('Side assigned:', data.side);
+        // Update playerData with the assigned side
+        if (playerData.side === 'auto') {
+            playerData.side = data.side;
+            
+            // Update the waiting screen text
+            const isVertical = playerData.orientation === 'vertical';
+            const sideText = isVertical 
+                ? (data.side === 'left' ? 'Alto' : 'Basso')
+                : (data.side === 'left' ? 'Sinistra' : 'Destra');
+            
+            const yourSideElement = document.getElementById('yourSide');
+            if (yourSideElement) {
+                yourSideElement.textContent = sideText;
+            }
+        }
+    });
 }
 
-function joinGame(name, side, viewMode) {
+function joinGame(name, side, viewMode, orientation) {
     playerData.name = name;
-    playerData.side = side;
+    playerData.side = side; // May be 'auto' initially
     playerData.viewMode = viewMode;
+    playerData.orientation = orientation;
     
-    socket.emit('joinGame', { name, side });
+    socket.emit('joinGame', { name, side, orientation });
     
     showScreen('waiting');
     document.getElementById('yourName').textContent = name;
-    document.getElementById('yourSide').textContent = side === 'left' ? 'Sinistra' : 'Destra';
+    
+    // If side is auto, we'll update the text when we receive gameState
+    if (side === 'auto') {
+        document.getElementById('yourSide').textContent = 'Assegnazione automatica...';
+    } else {
+        const sideText = orientation === 'vertical' 
+            ? (side === 'left' ? 'Alto' : 'Basso')
+            : (side === 'left' ? 'Sinistra' : 'Destra');
+        document.getElementById('yourSide').textContent = sideText;
+    }
 }
 
 function movePaddle(paddleY) {

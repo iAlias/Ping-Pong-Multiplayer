@@ -6,8 +6,8 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     color: white;
     overflow: hidden;
     width: 100vw;
@@ -29,31 +29,55 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .container {
     text-align: center;
     padding: 20px;
-    max-width: 400px;
+    max-width: 450px;
     width: 90%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 h1 {
     font-size: 3rem;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 h2 {
     font-size: 2rem;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
 }
 
 .subtitle {
     font-size: 1.2rem;
     margin-bottom: 30px;
-    opacity: 0.9;
+    opacity: 0.95;
+    font-weight: 500;
 }
 
 .form-group {
@@ -62,64 +86,113 @@ h2 {
 
 label {
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 1.1rem;
     font-weight: 600;
     color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 input {
     width: 100%;
-    padding: 15px;
+    padding: 16px;
     font-size: 1.1rem;
     border: none;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
     color: #333;
     text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 input:focus {
     outline: none;
     background: white;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.orientation-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.orientation-btn {
+    flex: 1;
+    padding: 16px 12px;
+    font-size: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.orientation-btn .emoji {
+    font-size: 1.8rem;
+}
+
+.orientation-btn .desc {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    font-weight: 400;
+}
+
+.orientation-btn:active {
+    transform: scale(0.97);
+}
+
+.orientation-btn.active {
+    background: linear-gradient(135deg, rgba(78, 204, 163, 0.9), rgba(78, 204, 163, 0.7));
+    border-color: rgba(78, 204, 163, 1);
+    box-shadow: 0 4px 16px rgba(78, 204, 163, 0.4);
+    color: white;
 }
 
 .side-buttons, .view-buttons {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .side-btn, .view-btn {
     flex: 1;
-    padding: 15px;
+    padding: 16px;
     font-size: 1.1rem;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.3);
-    color: #1a1a2e;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .side-btn:active, .view-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 .side-btn.selected, .view-btn.active {
-    background: rgba(255, 255, 255, 0.5);
-    border-color: white;
-    font-weight: bold;
-    color: #1a1a2e;
+    background: linear-gradient(135deg, rgba(240, 147, 251, 0.9), rgba(245, 87, 108, 0.8));
+    border-color: rgba(245, 87, 108, 1);
+    box-shadow: 0 4px 16px rgba(245, 87, 108, 0.4);
+    color: white;
 }
 
 .side-btn.taken {
-    background: rgba(255, 100, 100, 0.5);
-    border-color: rgba(255, 100, 100, 0.8);
+    background: rgba(100, 100, 100, 0.4);
+    border-color: rgba(150, 150, 150, 0.5);
     cursor: not-allowed;
-    opacity: 0.8;
-    color: #5a0000;
+    opacity: 0.7;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .side-btn:disabled {
@@ -129,43 +202,53 @@ input:focus {
 .btn-primary {
     width: 100%;
     padding: 18px;
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.3rem;
+    font-weight: 700;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 24px rgba(245, 87, 108, 0.5);
+    transform: translateY(-2px);
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
 }
 
 .btn-primary:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
 .error {
     margin-top: 15px;
-    padding: 10px;
-    background: rgba(255, 0, 0, 0.2);
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 12px;
+    background: rgba(255, 80, 80, 0.3);
+    border-radius: 10px;
+    font-size: 0.95rem;
     min-height: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 80, 80, 0.4);
 }
 
 .spinner {
     margin: 30px auto;
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #4ecca3;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -175,22 +258,24 @@ input:focus {
 .player-info {
     margin-top: 20px;
     font-size: 1.1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
 }
 
 p {
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    line-height: 1.5;
 }
 
 /* Game Screen */
 :root {
-    --scoreboard-height: 60px;
+    --scoreboard-height: 70px;
 }
 
 #game {
     display: none;
     flex-direction: column;
-    background: #1a1a2e;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
     justify-content: flex-start;
     align-items: stretch;
     position: relative;
@@ -204,29 +289,36 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.5);
+    padding: 18px 24px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+    backdrop-filter: blur(10px);
     font-size: 1.2rem;
-    font-weight: bold;
+    font-weight: 700;
     z-index: 10;
     height: var(--scoreboard-height);
     box-sizing: border-box;
     color: #ffffff;
+    border-bottom: 1px solid rgba(78, 204, 163, 0.3);
 }
 
 #leftPlayer, #rightPlayer {
     color: #4ecca3;
+    text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+    font-weight: 700;
 }
 
 #score {
-    font-size: 1.5rem;
-    color: #4ecca3;
+    font-size: 1.8rem;
+    color: #ffffff;
+    font-weight: 800;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    font-variant-numeric: tabular-nums;
 }
 
 #gameCanvas {
     flex: 1;
     display: block;
-    background: #0f0f1e;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
     touch-action: none;
 }
 
@@ -247,19 +339,22 @@ p {
 
 /* Game Over Screen */
 #gameOver {
-    background: rgba(0, 0, 0, 0.9);
+    background: linear-gradient(135deg, rgba(10, 14, 39, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+    backdrop-filter: blur(10px);
 }
 
 #winnerText {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin: 20px 0;
+    font-weight: 700;
 }
 
 #finalScore {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     margin: 20px 0;
     color: #4ecca3;
-    font-weight: bold;
+    font-weight: 800;
+    text-shadow: 0 0 20px rgba(78, 204, 163, 0.6);
 }
 
 /* Responsive adjustments */
@@ -269,7 +364,7 @@ p {
     }
     
     .container {
-        max-width: 500px;
+        max-width: 550px;
     }
 }
 
@@ -290,5 +385,14 @@ p {
     input, .side-btn, .view-btn, .btn-primary {
         padding: 10px;
         font-size: 1rem;
+    }
+    
+    .orientation-btn {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+    }
+    
+    .orientation-btn .emoji {
+        font-size: 1.4rem;
     }
 }
