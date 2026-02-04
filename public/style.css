@@ -11,9 +11,15 @@ body {
     color: white;
     overflow: hidden;
     width: 100vw;
-    height: 100vh;
+    height: 100vh; /* Fallback for browsers that don't support dvh */
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
     position: fixed;
     touch-action: none;
+    /* Safe area insets for notches and navigation bars */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 .screen {
@@ -45,25 +51,31 @@ body {
 
 .container {
     text-align: center;
-    padding: 20px;
+    padding: 24px;
     max-width: 450px;
     width: 90%;
-    background: rgba(255, 255, 255, 0.1);
+    max-height: 90vh; /* Fallback for browsers that don't support dvh */
+    max-height: 90dvh;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(20px);
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* Smooth scrolling */
+    -webkit-overflow-scrolling: touch;
 }
 
 h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
+    font-size: 2.8rem;
+    margin-bottom: 8px;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
     font-weight: 800;
     background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    line-height: 1.2;
 }
 
 h2 {
@@ -74,29 +86,30 @@ h2 {
 }
 
 .subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+    font-size: 1.1rem;
+    margin-bottom: 24px;
     opacity: 0.95;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.95);
 }
 
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
-    margin-bottom: 12px;
-    font-size: 1.1rem;
+    margin-bottom: 10px;
+    font-size: 1rem;
     font-weight: 600;
-    color: white;
+    color: rgba(255, 255, 255, 0.98);
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 input {
     width: 100%;
-    padding: 16px;
-    font-size: 1.1rem;
+    padding: 14px;
+    font-size: 1.05rem;
     border: none;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.95);
@@ -121,8 +134,8 @@ input:focus {
 
 .orientation-btn {
     flex: 1;
-    padding: 16px 12px;
-    font-size: 1rem;
+    padding: 14px 10px;
+    font-size: 0.95rem;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.15);
@@ -133,11 +146,11 @@ input:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
 .orientation-btn .emoji {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
 }
 
 .orientation-btn .desc {
@@ -164,8 +177,8 @@ input:focus {
 
 .side-btn, .view-btn {
     flex: 1;
-    padding: 16px;
-    font-size: 1.1rem;
+    padding: 14px;
+    font-size: 1rem;
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.15);
@@ -201,8 +214,8 @@ input:focus {
 
 .btn-primary {
     width: 100%;
-    padding: 18px;
-    font-size: 1.3rem;
+    padding: 16px;
+    font-size: 1.2rem;
     font-weight: 700;
     border: none;
     border-radius: 12px;
@@ -213,6 +226,7 @@ input:focus {
     box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-top: 4px;
 }
 
 .btn-primary:hover {
@@ -269,7 +283,7 @@ p {
 
 /* Game Screen */
 :root {
-    --scoreboard-height: 70px;
+    --scoreboard-height: 60px;
 }
 
 #game {
@@ -289,16 +303,20 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 24px;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%);
+    padding: 15px 20px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
     backdrop-filter: blur(10px);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     z-index: 10;
     height: var(--scoreboard-height);
     box-sizing: border-box;
     color: #ffffff;
     border-bottom: 1px solid rgba(78, 204, 163, 0.3);
+    /* Add safe area padding */
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-top: max(15px, calc(env(safe-area-inset-top) + 5px));
 }
 
 #leftPlayer, #rightPlayer {
@@ -308,7 +326,7 @@ p {
 }
 
 #score {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     color: #ffffff;
     font-weight: 800;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
@@ -325,9 +343,9 @@ p {
 #touchArea {
     position: absolute;
     top: var(--scoreboard-height);
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: env(safe-area-inset-left);
+    right: env(safe-area-inset-right);
+    bottom: env(safe-area-inset-bottom);
     z-index: 5;
     touch-action: none;
     pointer-events: none;
@@ -358,9 +376,40 @@ p {
 }
 
 /* Responsive adjustments */
+@media (max-height: 700px) {
+    h1 {
+        font-size: 2.2rem;
+        margin-bottom: 6px;
+    }
+    
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 18px;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    label {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+    
+    input, .side-btn, .view-btn, .btn-primary {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    
+    .orientation-btn {
+        padding: 12px 8px;
+        font-size: 0.9rem;
+    }
+}
+
 @media (min-width: 768px) {
     h1 {
-        font-size: 4rem;
+        font-size: 3.5rem;
     }
     
     .container {
@@ -371,28 +420,46 @@ p {
 /* Landscape mode adjustments */
 @media (orientation: landscape) and (max-height: 500px) {
     h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 4px;
     }
     
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
     }
     
     .form-group {
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+    }
+    
+    label {
+        margin-bottom: 6px;
+        font-size: 0.85rem;
     }
     
     input, .side-btn, .view-btn, .btn-primary {
-        padding: 10px;
-        font-size: 1rem;
+        padding: 8px;
+        font-size: 0.85rem;
     }
     
     .orientation-btn {
-        padding: 10px 8px;
-        font-size: 0.9rem;
+        padding: 8px 6px;
+        font-size: 0.8rem;
     }
     
     .orientation-btn .emoji {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+    }
+    
+    .container {
+        padding: 16px;
+        max-height: 85vh; /* Fallback for browsers that don't support dvh */
+        max-height: 85dvh;
     }
 }
