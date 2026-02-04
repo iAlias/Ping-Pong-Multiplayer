@@ -193,6 +193,7 @@ p {
     background: #1a1a2e;
     justify-content: flex-start;
     align-items: stretch;
+    position: relative;
 }
 
 #game.active {
@@ -223,13 +224,7 @@ p {
 }
 
 #gameCanvas {
-    position: absolute;
-    top: var(--scoreboard-height);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: calc(100% - var(--scoreboard-height));
+    flex: 1;
     display: block;
     background: #0f0f1e;
     touch-action: none;
@@ -237,7 +232,7 @@ p {
 
 #touchArea {
     position: absolute;
-    top: 60px;
+    top: var(--scoreboard-height);
     left: 0;
     right: 0;
     bottom: 0;
