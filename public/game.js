@@ -49,6 +49,10 @@ function initLobby() {
     // Side selection
     sideBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            // Don't allow selecting a taken side
+            if (btn.disabled) {
+                return;
+            }
             sideBtns.forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             selectedSide = btn.dataset.side;
@@ -170,6 +174,32 @@ function updateGameState(state) {
     players = state.players;
     score = state.score;
     
+    // Update side buttons to disable taken sides (only in lobby)
+    if (screens.lobby.classList.contains('active')) {
+        const leftBtn = document.querySelector('.side-btn[data-side="left"]');
+        const rightBtn = document.querySelector('.side-btn[data-side="right"]');
+        
+        if (players.left) {
+            leftBtn.disabled = true;
+            leftBtn.textContent = `Sinistra (${players.left.name})`;
+            leftBtn.classList.add('taken');
+        } else {
+            leftBtn.disabled = false;
+            leftBtn.textContent = 'Sinistra';
+            leftBtn.classList.remove('taken');
+        }
+        
+        if (players.right) {
+            rightBtn.disabled = true;
+            rightBtn.textContent = `Destra (${players.right.name})`;
+            rightBtn.classList.add('taken');
+        } else {
+            rightBtn.disabled = false;
+            rightBtn.textContent = 'Destra';
+            rightBtn.classList.remove('taken');
+        }
+    }
+    
     // Update scoreboard with player names
     if (players.left) {
         document.getElementById('leftPlayer').textContent = players.left.name;
@@ -204,6 +234,7 @@ function updateScore(scoreData) {
 
 function startGame() {
     gameActive = true;
+    resizeCanvas(); // Resize canvas now that it's visible
     requestAnimationFrame(gameLoop);
 }
 
