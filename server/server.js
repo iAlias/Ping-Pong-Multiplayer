@@ -5,7 +5,19 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+
+// CORS configuration for Socket.IO
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) : "*";
+if (!process.env.ALLOWED_ORIGINS) {
+  console.warn('WARNING: CORS is set to allow all origins (*). For production, set ALLOWED_ORIGINS environment variable.');
+}
+
+const io = socketIO(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"]
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 

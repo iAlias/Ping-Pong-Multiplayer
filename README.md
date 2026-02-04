@@ -53,6 +53,15 @@ http://localhost:3000
 8. Move your paddle up and down by touching and dragging
 9. First player to reach 10 points wins!
 
+## Configuration
+
+### Environment Variables
+
+- `PORT` - Server port (default: 3000)
+- `ALLOWED_ORIGINS` - Comma-separated list of allowed CORS origins for Socket.IO connections (default: "*" allows all origins)
+  - Example: `ALLOWED_ORIGINS=https://your-app.render.com,https://your-custom-domain.com`
+  - For production, it's recommended to set this to your specific domain(s) for security
+
 ## Deployment
 
 ### Deploy to Railway
@@ -75,7 +84,10 @@ railway up
 2. Connect your GitHub repository
 3. Set build command: `npm install`
 4. Set start command: `npm start`
-5. Deploy!
+5. (Optional) Add environment variable:
+   - Key: `ALLOWED_ORIGINS`
+   - Value: Your Render app URL (e.g., `https://your-app.onrender.com`)
+6. Deploy!
 
 ### Deploy to Heroku
 
