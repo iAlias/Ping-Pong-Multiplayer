@@ -162,9 +162,13 @@ input:focus {
 
 /* Game Screen */
 #game {
-    display: flex;
+    display: none;
     flex-direction: column;
     background: #1a1a2e;
+}
+
+#game.active {
+    display: flex;
 }
 
 #scoreBoard {
@@ -198,6 +202,11 @@ input:focus {
     bottom: 0;
     z-index: 5;
     touch-action: none;
+    pointer-events: none;
+}
+
+#game.active #touchArea {
+    pointer-events: auto;
 }
 
 /* Game Over Screen */
