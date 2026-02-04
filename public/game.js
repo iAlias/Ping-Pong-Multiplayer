@@ -49,10 +49,6 @@ function initLobby() {
     // Side selection
     sideBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Don't allow selecting a taken side
-            if (btn.disabled) {
-                return;
-            }
             sideBtns.forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             selectedSide = btn.dataset.side;
