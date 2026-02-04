@@ -5,7 +5,12 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+  cors: {
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) : "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 
