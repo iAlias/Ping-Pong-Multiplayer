@@ -90,12 +90,16 @@ function resizeCanvas() {
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
     
+    // Don't resize if canvas has no dimensions yet
+    if (rect.width === 0 || rect.height === 0) {
+        console.warn('Canvas has no dimensions, skipping resize');
+        return;
+    }
+    
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
     
     ctx.scale(dpr, dpr);
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
 }
 
 function setupTouchControls() {
@@ -232,8 +236,18 @@ function updateScore(scoreData) {
 
 function startGame() {
     gameActive = true;
-    resizeCanvas(); // Resize canvas now that it's visible
-    requestAnimationFrame(gameLoop);
+    // Wait for canvas to have dimensions before starting
+    const initCanvas = () => {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+            resizeCanvas();
+            requestAnimationFrame(gameLoop);
+        } else {
+            // Retry on next animation frame
+            requestAnimationFrame(initCanvas);
+        }
+    };
+    requestAnimationFrame(initCanvas);
 }
 
 function gameLoop() {
