@@ -9,6 +9,13 @@ const io = socketIO(server);
 
 const PORT = process.env.PORT || 3000;
 
+// Game constants
+const BALL_INITIAL_SPEED = 0.01;
+const BALL_SPEED_INCREASE_FACTOR = 1.05;
+const BALL_SPIN_FACTOR = 0.005;
+const PADDLE_WIDTH = 0.02;
+const PADDLE_HEIGHT = 0.15;
+
 // Serve static files
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -69,8 +76,8 @@ io.on('connection', (socket) => {
       gameState.ball = {
         x: 0.5,
         y: 0.5,
-        vx: 0.01,
-        vy: 0.01,
+        vx: BALL_INITIAL_SPEED,
+        vy: BALL_INITIAL_SPEED,
         speed: 1
       };
       io.emit('gameStarted');
@@ -107,7 +114,7 @@ io.on('connection', (socket) => {
     if (gameState.gameStarted) {
       gameState.gameStarted = false;
       gameState.gameEnded = true;
-      gameState.ball = { x: 0.5, y: 0.5, vx: 0.01, vy: 0.01, speed: 1 };
+      gameState.ball = { x: 0.5, y: 0.5, vx: BALL_INITIAL_SPEED, vy: BALL_INITIAL_SPEED, speed: 1 };
       io.emit('playerLeft');
     }
 
@@ -121,8 +128,8 @@ io.on('connection', (socket) => {
       gameState.ball = {
         x: 0.5,
         y: 0.5,
-        vx: 0.01,
-        vy: 0.01,
+        vx: BALL_INITIAL_SPEED,
+        vy: BALL_INITIAL_SPEED,
         speed: 1
       };
       gameState.gameStarted = true;
@@ -156,8 +163,8 @@ function updateBall() {
   }
 
   // Check paddle collision
-  const paddleWidth = 0.02;
-  const paddleHeight = 0.15;
+  const paddleWidth = PADDLE_WIDTH;
+  const paddleHeight = PADDLE_HEIGHT;
 
   // Left paddle
   if (gameState.players.left && ball.x <= paddleWidth && ball.vx < 0) {
@@ -168,7 +175,7 @@ function updateBall() {
       ball.x = paddleWidth;
       // Add spin based on where ball hits paddle
       const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
-      ball.vy += hitPos * 0.005;
+      ball.vy += hitPos * BALL_SPIN_FACTOR;
     }
   }
 
@@ -181,7 +188,7 @@ function updateBall() {
       ball.x = 1 - paddleWidth;
       // Add spin based on where ball hits paddle
       const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
-      ball.vy += hitPos * 0.005;
+      ball.vy += hitPos * BALL_SPIN_FACTOR;
     }
   }
 
@@ -205,9 +212,9 @@ function resetBall() {
   gameState.ball = {
     x: 0.5,
     y: 0.5,
-    vx: (Math.random() > 0.5 ? 0.01 : -0.01),
-    vy: (Math.random() - 0.5) * 0.01,
-    speed: gameState.ball.speed * 1.05 // Increase speed slightly
+    vx: (Math.random() > 0.5 ? BALL_INITIAL_SPEED : -BALL_INITIAL_SPEED),
+    vy: (Math.random() - 0.5) * BALL_INITIAL_SPEED,
+    speed: gameState.ball.speed * BALL_SPEED_INCREASE_FACTOR // Increase speed slightly
   };
 }
 

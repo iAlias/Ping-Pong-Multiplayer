@@ -8,10 +8,11 @@ let ball = { x: 0.5, y: 0.5 };
 let score = { left: 0, right: 0 };
 let players = { left: null, right: null };
 
-// Constants
-const PADDLE_WIDTH = 0.02;
-const PADDLE_HEIGHT = 0.15;
-const BALL_SIZE = 0.015;
+// Game dimension constants (normalized 0-1 range, not pixels)
+// These represent proportions of the canvas dimensions
+const PADDLE_WIDTH = 0.02;   // 2% of canvas width
+const PADDLE_HEIGHT = 0.15;  // 15% of canvas height
+const BALL_SIZE = 0.015;     // 1.5% of canvas width
 
 // UI Elements
 const screens = {
