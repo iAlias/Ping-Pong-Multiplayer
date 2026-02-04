@@ -203,8 +203,13 @@ input:focus {
 }
 
 #gameCanvas {
-    flex: 1;
+    position: absolute;
+    top: 60px;  /* Height of scoreBoard */
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
+    height: calc(100% - 60px);
     display: block;
     background: #0f0f1e;
     touch-action: none;
