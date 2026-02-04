@@ -62,7 +62,20 @@ io.on('connection', (socket) => {
 
   // Handle player join
   socket.on('joinGame', (data) => {
-    const { name, side, orientation } = data;
+    let { name, side, orientation } = data;
+
+    // Auto-assign side in vertical mode
+    if (side === 'auto') {
+      // Assign left if available, otherwise right
+      if (!gameState.players.left) {
+        side = 'left';
+      } else if (!gameState.players.right) {
+        side = 'right';
+      } else {
+        socket.emit('error', { message: 'Game is full' });
+        return;
+      }
+    }
 
     // Check if side is already taken
     if (gameState.players[side]) {

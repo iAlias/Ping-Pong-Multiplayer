@@ -67,7 +67,7 @@ function initSocket() {
 
 function joinGame(name, side, viewMode, orientation) {
     playerData.name = name;
-    playerData.side = side;
+    playerData.side = side; // May be 'auto' initially
     playerData.viewMode = viewMode;
     playerData.orientation = orientation;
     
@@ -75,10 +75,16 @@ function joinGame(name, side, viewMode, orientation) {
     
     showScreen('waiting');
     document.getElementById('yourName').textContent = name;
-    const sideText = orientation === 'vertical' 
-        ? (side === 'left' ? 'Alto' : 'Basso')
-        : (side === 'left' ? 'Sinistra' : 'Destra');
-    document.getElementById('yourSide').textContent = sideText;
+    
+    // If side is auto, we'll update the text when we receive gameState
+    if (side === 'auto') {
+        document.getElementById('yourSide').textContent = 'Assegnazione automatica...';
+    } else {
+        const sideText = orientation === 'vertical' 
+            ? (side === 'left' ? 'Alto' : 'Basso')
+            : (side === 'left' ? 'Sinistra' : 'Destra');
+        document.getElementById('yourSide').textContent = sideText;
+    }
 }
 
 function movePaddle(paddleY) {

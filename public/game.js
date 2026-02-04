@@ -35,20 +35,26 @@ function initLobby() {
     const sideBtns = document.querySelectorAll('.side-btn');
     const viewBtns = document.querySelectorAll('.view-btn');
     const orientationBtns = document.querySelectorAll('.orientation-btn');
+    const sideGroup = document.getElementById('sideGroup');
     const replayBtn = document.getElementById('replayBtn');
     
     let selectedSide = null;
     let selectedView = 'full';
-    let selectedOrientation = 'horizontal';
+    let selectedOrientation = 'vertical'; // Default to vertical
     
-    // Enable join button when name and side are selected
+    // Enable join button based on mode
     function updateJoinButton() {
-        joinBtn.disabled = !playerNameInput.value.trim() || !selectedSide;
+        if (selectedOrientation === 'vertical') {
+            // In vertical mode, only name is required
+            joinBtn.disabled = !playerNameInput.value.trim();
+        } else {
+            // In horizontal mode, name and side are required
+            joinBtn.disabled = !playerNameInput.value.trim() || !selectedSide;
+        }
     }
     
     // Update side button labels based on orientation
     function updateSideLabels() {
-        const sideGroup = document.getElementById('sideGroup');
         const label = sideGroup.querySelector('label');
         const leftBtn = document.querySelector('.side-btn[data-side="left"]');
         const rightBtn = document.querySelector('.side-btn[data-side="right"]');
@@ -64,6 +70,21 @@ function initLobby() {
         }
     }
     
+    // Show/hide side selection based on orientation
+    function updateSideGroupVisibility() {
+        if (selectedOrientation === 'vertical') {
+            sideGroup.style.display = 'none';
+            selectedSide = null; // Clear selection in vertical mode
+        } else {
+            sideGroup.style.display = 'block';
+        }
+        updateJoinButton();
+    }
+    
+    // Initialize the UI
+    updateSideLabels();
+    updateSideGroupVisibility();
+    
     playerNameInput.addEventListener('input', updateJoinButton);
     
     // Orientation selection
@@ -73,6 +94,7 @@ function initLobby() {
             btn.classList.add('active');
             selectedOrientation = btn.dataset.orientation;
             updateSideLabels();
+            updateSideGroupVisibility();
         });
     });
     
@@ -98,8 +120,13 @@ function initLobby() {
     // Join game
     joinBtn.addEventListener('click', () => {
         const name = playerNameInput.value.trim();
-        if (name && selectedSide) {
-            joinGame(name, selectedSide, selectedView, selectedOrientation);
+        if (name) {
+            // In vertical mode, auto-assign side (server will handle this)
+            const side = selectedOrientation === 'vertical' ? 'auto' : selectedSide;
+            if (selectedOrientation === 'horizontal' && !side) {
+                return; // Don't join if horizontal and no side selected
+            }
+            joinGame(name, side, selectedView, selectedOrientation);
         }
     });
     
@@ -219,6 +246,25 @@ function updateGameState(state) {
     // Update orientation from game state
     if (state.orientation) {
         playerData.orientation = state.orientation;
+    }
+    
+    // If side was auto-assigned, detect which side we got
+    if (playerData.side === 'auto') {
+        // Find our player by socket ID (we need to check both sides)
+        if (players.left && players.left.name === playerData.name) {
+            playerData.side = 'left';
+        } else if (players.right && players.right.name === playerData.name) {
+            playerData.side = 'right';
+        }
+        
+        // Update the waiting screen text if we're on it
+        if (screens.waiting.classList.contains('active') && playerData.side !== 'auto') {
+            const isVertical = playerData.orientation === 'vertical';
+            const sideText = isVertical 
+                ? (playerData.side === 'left' ? 'Alto' : 'Basso')
+                : (playerData.side === 'left' ? 'Sinistra' : 'Destra');
+            document.getElementById('yourSide').textContent = sideText;
+        }
     }
     
     // Update side buttons to disable taken sides (only in lobby)
