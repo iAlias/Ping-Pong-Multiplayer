@@ -11,7 +11,7 @@ body {
     color: white;
     overflow: hidden;
     width: 100vw;
-    height: 100vh;
+    height: 100vh; /* Fallback for browsers that don't support dvh */
     height: 100dvh; /* Dynamic viewport height for mobile browsers */
     position: fixed;
     touch-action: none;
@@ -54,7 +54,7 @@ body {
     padding: 24px;
     max-width: 450px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 90vh; /* Fallback for browsers that don't support dvh */
     max-height: 90dvh;
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.12);
@@ -342,7 +342,7 @@ p {
 
 #touchArea {
     position: absolute;
-    top: calc(var(--scoreboard-height) + env(safe-area-inset-top));
+    top: var(--scoreboard-height);
     left: env(safe-area-inset-left);
     right: env(safe-area-inset-right);
     bottom: env(safe-area-inset-bottom);
@@ -459,6 +459,7 @@ p {
     
     .container {
         padding: 16px;
-        max-height: 85vh;
+        max-height: 85vh; /* Fallback for browsers that don't support dvh */
+        max-height: 85dvh;
     }
 }
