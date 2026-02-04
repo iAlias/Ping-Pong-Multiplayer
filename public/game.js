@@ -236,11 +236,18 @@ function updateScore(scoreData) {
 
 function startGame() {
     gameActive = true;
-    // Use setTimeout to ensure the screen is fully rendered before resizing canvas
-    setTimeout(() => {
-        resizeCanvas();
-        requestAnimationFrame(gameLoop);
-    }, 50);
+    // Wait for canvas to have dimensions before starting
+    const initCanvas = () => {
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+            resizeCanvas();
+            requestAnimationFrame(gameLoop);
+        } else {
+            // Retry on next animation frame
+            requestAnimationFrame(initCanvas);
+        }
+    };
+    requestAnimationFrame(initCanvas);
 }
 
 function gameLoop() {
