@@ -1,0 +1,22 @@
+{
+  "name": "ping-pong-multiplayer",
+  "version": "1.0.0",
+  "description": "Real-time multiplayer Ping Pong game for mobile browsers",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "keywords": [
+    "ping-pong",
+    "multiplayer",
+    "game",
+    "websocket"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  }
+}

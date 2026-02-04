@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Ping Pong Multiplayer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Lobby Screen -->
+    <div id="lobby" class="screen active">
+        <div class="container">
+            <h1>🏓 Ping Pong</h1>
+            <p class="subtitle">Multiplayer Game</p>
+            
+            <div class="form-group">
+                <label for="playerName">Il tuo nome:</label>
+                <input type="text" id="playerName" placeholder="Inserisci nome" maxlength="15">
+            </div>
+            
+            <div class="form-group">
+                <label>Scegli il tuo lato:</label>
+                <div class="side-buttons">
+                    <button class="side-btn" data-side="left">Sinistra</button>
+                    <button class="side-btn" data-side="right">Destra</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Vista campo:</label>
+                <div class="view-buttons">
+                    <button class="view-btn active" data-view="full">Campo completo</button>
+                    <button class="view-btn" data-view="half">Solo la mia metà</button>
+                </div>
+            </div>
+            
+            <button id="joinBtn" class="btn-primary" disabled>Entra in partita</button>
+            
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <!-- Waiting Screen -->
+    <div id="waiting" class="screen">
+        <div class="container">
+            <h2>In attesa...</h2>
+            <p id="waitingText">Aspettando l'altro giocatore</p>
+            <div class="spinner"></div>
+            <p class="player-info">Sei: <strong id="yourName"></strong> (<span id="yourSide"></span>)</p>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game" class="screen">
+        <div id="scoreBoard">
+            <span id="leftPlayer">Sinistra</span>
+            <span id="score">0 - 0</span>
+            <span id="rightPlayer">Destra</span>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="touchArea"></div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOver" class="screen">
+        <div class="container">
+            <h1>🏆 Partita Terminata!</h1>
+            <p id="winnerText"></p>
+            <p id="finalScore"></p>
+            <button id="replayBtn" class="btn-primary">Rigioca</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="socket.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
