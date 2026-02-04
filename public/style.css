@@ -47,6 +47,7 @@ h1 {
 h2 {
     font-size: 2rem;
     margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .subtitle {
@@ -95,10 +96,11 @@ input:focus {
     font-size: 1.1rem;
     border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(255, 255, 255, 0.3);
+    color: #1a1a2e;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-weight: 600;
 }
 
 .side-btn:active, .view-btn:active {
@@ -106,16 +108,18 @@ input:focus {
 }
 
 .side-btn.selected, .view-btn.active {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.5);
     border-color: white;
     font-weight: bold;
+    color: #1a1a2e;
 }
 
 .side-btn.taken {
-    background: rgba(255, 0, 0, 0.2);
-    border-color: rgba(255, 0, 0, 0.5);
+    background: rgba(255, 100, 100, 0.5);
+    border-color: rgba(255, 100, 100, 0.8);
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.8;
+    color: #5a0000;
 }
 
 .side-btn:disabled {
@@ -171,6 +175,11 @@ input:focus {
 .player-info {
     margin-top: 20px;
     font-size: 1.1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+p {
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Game Screen */
@@ -201,6 +210,11 @@ input:focus {
     z-index: 10;
     height: var(--scoreboard-height);
     box-sizing: border-box;
+    color: #ffffff;
+}
+
+#leftPlayer, #rightPlayer {
+    color: #4ecca3;
 }
 
 #score {

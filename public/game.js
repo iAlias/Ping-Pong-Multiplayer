@@ -232,8 +232,11 @@ function updateScore(scoreData) {
 
 function startGame() {
     gameActive = true;
-    resizeCanvas(); // Resize canvas now that it's visible
-    requestAnimationFrame(gameLoop);
+    // Use requestAnimationFrame to ensure the canvas is visible and has dimensions
+    requestAnimationFrame(() => {
+        resizeCanvas(); // Resize canvas now that it's visible
+        requestAnimationFrame(gameLoop);
+    });
 }
 
 function gameLoop() {
