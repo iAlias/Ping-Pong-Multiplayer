@@ -170,60 +170,119 @@ setInterval(() => {
 
 function updateBall() {
   const ball = gameState.ball;
+  const isVertical = gameState.orientation === 'vertical';
   
   // Update position
   ball.x += ball.vx * ball.speed;
   ball.y += ball.vy * ball.speed;
 
-  // Bounce off top and bottom
-  if (ball.y <= 0 || ball.y >= 1) {
-    ball.vy *= -1;
-    ball.y = Math.max(0, Math.min(1, ball.y));
-  }
-
-  // Check paddle collision
-  const paddleWidth = PADDLE_WIDTH;
-  const paddleHeight = PADDLE_HEIGHT;
-
-  // Left paddle
-  if (gameState.players.left && ball.x <= paddleWidth && ball.vx < 0) {
-    const paddle = gameState.players.left;
-    if (ball.y >= paddle.paddleY - paddleHeight / 2 && 
-        ball.y <= paddle.paddleY + paddleHeight / 2) {
-      ball.vx *= -1;
-      ball.x = paddleWidth;
-      // Add spin based on where ball hits paddle
-      const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
-      ball.vy += hitPos * BALL_SPIN_FACTOR;
+  if (isVertical) {
+    // VERTICAL MODE - Ball moves top to bottom
+    // In vertical mode: ball.x = vertical position, ball.y = horizontal position
+    
+    // Bounce off left and right walls
+    if (ball.y <= 0 || ball.y >= 1) {
+      ball.vy *= -1;
+      ball.y = Math.max(0, Math.min(1, ball.y));
     }
-  }
 
-  // Right paddle
-  if (gameState.players.right && ball.x >= 1 - paddleWidth && ball.vx > 0) {
-    const paddle = gameState.players.right;
-    if (ball.y >= paddle.paddleY - paddleHeight / 2 && 
-        ball.y <= paddle.paddleY + paddleHeight / 2) {
-      ball.vx *= -1;
-      ball.x = 1 - paddleWidth;
-      // Add spin based on where ball hits paddle
-      const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
-      ball.vy += hitPos * BALL_SPIN_FACTOR;
+    // Check paddle collision
+    const paddleWidth = PADDLE_HEIGHT; // Swapped for vertical
+    const paddleHeight = PADDLE_WIDTH;
+
+    // Top paddle (left player)
+    if (gameState.players.left && ball.x <= paddleHeight && ball.vx < 0) {
+      const paddle = gameState.players.left;
+      // Check if ball hits paddle (horizontally)
+      if (ball.y >= paddle.paddleY - paddleWidth / 2 && 
+          ball.y <= paddle.paddleY + paddleWidth / 2) {
+        ball.vx *= -1;
+        ball.x = paddleHeight;
+        // Add spin based on where ball hits paddle
+        const hitPos = (ball.y - paddle.paddleY) / (paddleWidth / 2);
+        ball.vy += hitPos * BALL_SPIN_FACTOR;
+      }
     }
-  }
 
-  // Score points
-  if (ball.x < 0) {
-    // Right player scores
-    gameState.score.right++;
-    io.emit('scoreUpdate', gameState.score);
-    checkWinner();
-    resetBall();
-  } else if (ball.x > 1) {
-    // Left player scores
-    gameState.score.left++;
-    io.emit('scoreUpdate', gameState.score);
-    checkWinner();
-    resetBall();
+    // Bottom paddle (right player)
+    if (gameState.players.right && ball.x >= 1 - paddleHeight && ball.vx > 0) {
+      const paddle = gameState.players.right;
+      if (ball.y >= paddle.paddleY - paddleWidth / 2 && 
+          ball.y <= paddle.paddleY + paddleWidth / 2) {
+        ball.vx *= -1;
+        ball.x = 1 - paddleHeight;
+        // Add spin based on where ball hits paddle
+        const hitPos = (ball.y - paddle.paddleY) / (paddleWidth / 2);
+        ball.vy += hitPos * BALL_SPIN_FACTOR;
+      }
+    }
+
+    // Score points
+    if (ball.x < 0) {
+      // Right player (bottom) scores
+      gameState.score.right++;
+      io.emit('scoreUpdate', gameState.score);
+      checkWinner();
+      resetBall();
+    } else if (ball.x > 1) {
+      // Left player (top) scores
+      gameState.score.left++;
+      io.emit('scoreUpdate', gameState.score);
+      checkWinner();
+      resetBall();
+    }
+  } else {
+    // HORIZONTAL MODE - Traditional left-right
+    // Bounce off top and bottom
+    if (ball.y <= 0 || ball.y >= 1) {
+      ball.vy *= -1;
+      ball.y = Math.max(0, Math.min(1, ball.y));
+    }
+
+    // Check paddle collision
+    const paddleWidth = PADDLE_WIDTH;
+    const paddleHeight = PADDLE_HEIGHT;
+
+    // Left paddle
+    if (gameState.players.left && ball.x <= paddleWidth && ball.vx < 0) {
+      const paddle = gameState.players.left;
+      if (ball.y >= paddle.paddleY - paddleHeight / 2 && 
+          ball.y <= paddle.paddleY + paddleHeight / 2) {
+        ball.vx *= -1;
+        ball.x = paddleWidth;
+        // Add spin based on where ball hits paddle
+        const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
+        ball.vy += hitPos * BALL_SPIN_FACTOR;
+      }
+    }
+
+    // Right paddle
+    if (gameState.players.right && ball.x >= 1 - paddleWidth && ball.vx > 0) {
+      const paddle = gameState.players.right;
+      if (ball.y >= paddle.paddleY - paddleHeight / 2 && 
+          ball.y <= paddle.paddleY + paddleHeight / 2) {
+        ball.vx *= -1;
+        ball.x = 1 - paddleWidth;
+        // Add spin based on where ball hits paddle
+        const hitPos = (ball.y - paddle.paddleY) / (paddleHeight / 2);
+        ball.vy += hitPos * BALL_SPIN_FACTOR;
+      }
+    }
+
+    // Score points
+    if (ball.x < 0) {
+      // Right player scores
+      gameState.score.right++;
+      io.emit('scoreUpdate', gameState.score);
+      checkWinner();
+      resetBall();
+    } else if (ball.x > 1) {
+      // Left player scores
+      gameState.score.left++;
+      io.emit('scoreUpdate', gameState.score);
+      checkWinner();
+      resetBall();
+    }
   }
 }
 
