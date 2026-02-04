@@ -217,7 +217,7 @@ function updateGameState(state) {
     score = state.score;
     
     // Update orientation from game state
-    if (state.orientation && !playerData.orientation) {
+    if (state.orientation) {
         playerData.orientation = state.orientation;
     }
     
