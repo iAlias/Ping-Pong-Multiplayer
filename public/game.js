@@ -460,35 +460,31 @@ function render() {
         const paddleWidth = PADDLE_WIDTH * width * scaleX;
         const paddleHeight = PADDLE_HEIGHT * height;
         
-        // Left paddle
-        if (!isHalfView || isLeftPlayer) {
-            const leftPaddleY = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * height;
-            ctx.fillStyle = '#4ecca3';
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#4ecca3';
-            ctx.fillRect(
-                10 * scaleX,
-                leftPaddleY - paddleHeight / 2,
-                paddleWidth,
-                paddleHeight
-            );
-            ctx.shadowBlur = 0;
-        }
+        // Left paddle - always show
+        const leftPaddleY = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * height;
+        ctx.fillStyle = isLeftPlayer ? '#4ecca3' : '#f093fb';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = isLeftPlayer ? '#4ecca3' : '#f093fb';
+        ctx.fillRect(
+            10 * scaleX,
+            leftPaddleY - paddleHeight / 2,
+            paddleWidth,
+            paddleHeight
+        );
+        ctx.shadowBlur = 0;
         
-        // Right paddle
-        if (!isHalfView || !isLeftPlayer) {
-            const rightPaddleY = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * height;
-            ctx.fillStyle = '#f093fb';
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#f093fb';
-            ctx.fillRect(
-                (width - 10) * scaleX - paddleWidth,
-                rightPaddleY - paddleHeight / 2,
-                paddleWidth,
-                paddleHeight
-            );
-            ctx.shadowBlur = 0;
-        }
+        // Right paddle - always show
+        const rightPaddleY = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * height;
+        ctx.fillStyle = isLeftPlayer ? '#f093fb' : '#4ecca3';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = isLeftPlayer ? '#f093fb' : '#4ecca3';
+        ctx.fillRect(
+            (width - 10) * scaleX - paddleWidth,
+            rightPaddleY - paddleHeight / 2,
+            paddleWidth,
+            paddleHeight
+        );
+        ctx.shadowBlur = 0;
         
         // Draw ball
         const ballX = ball.x * width * scaleX;
