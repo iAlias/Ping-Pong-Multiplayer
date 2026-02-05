@@ -360,15 +360,16 @@ function render() {
         offsetX = isLeftPlayer ? 0 : -width;
     } else if (isHalfView && isVertical) {
         // Show only player's half (vertical mode)
+        // In vertical mode, player always sees bottom half (their half)
         scaleY = 2;
-        offsetY = isLeftPlayer ? 0 : -height;
+        offsetY = -height; // Always show bottom half from player's perspective
     }
     
     ctx.save();
     ctx.translate(offsetX, offsetY);
     
     if (isVertical) {
-        // VERTICAL MODE - Players at bottom facing each other
+        // VERTICAL MODE - Each player sees their paddle at bottom, opponent at top
         // Draw horizontal center line (dashed)
         ctx.strokeStyle = 'rgba(78, 204, 163, 0.3)';
         ctx.setLineDash([10, 10]);
@@ -383,14 +384,30 @@ function render() {
         const paddleWidth = PADDLE_HEIGHT * width; // Swap dimensions
         const paddleHeight = PADDLE_WIDTH * height * scaleY;
         
-        // Top paddle (left player, rotated 180 degrees at bottom)
-        if (!isHalfView || isLeftPlayer) {
-            const topPaddleX = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * width;
-            ctx.fillStyle = '#4ecca3';
+        // Get paddle positions from game state
+        const myPlayerData = players[playerData.side];
+        const opponentSide = playerData.side === 'left' ? 'right' : 'left';
+        const opponentPlayerData = players[opponentSide];
+        
+        // Determine ball position for current player's perspective
+        // In vertical mode: ball.x represents vertical movement (0=top, 1=bottom)
+        // ball.y represents horizontal position
+        let ballVerticalPos = ball.x;
+        
+        // If player is on "right" side (bottom in server coords), flip the vertical position
+        // so they see themselves at bottom of their screen
+        if (!isLeftPlayer) {
+            ballVerticalPos = 1 - ball.x;
+        }
+        
+        // Opponent paddle (at top of screen) -  pink/purple
+        if (opponentPlayerData && opponentPlayerData.paddleY !== undefined) {
+            const opponentPaddleX = opponentPlayerData.paddleY * width;
+            ctx.fillStyle = '#f093fb';
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#4ecca3';
+            ctx.shadowColor = '#f093fb';
             ctx.fillRect(
-                topPaddleX - paddleWidth / 2,
+                opponentPaddleX - paddleWidth / 2,
                 10 * scaleY,
                 paddleWidth,
                 paddleHeight
@@ -398,15 +415,16 @@ function render() {
             ctx.shadowBlur = 0;
         }
         
-        // Bottom paddle (right player, at bottom)
-        if (!isHalfView || !isLeftPlayer) {
-            const bottomPaddleX = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * width;
-            ctx.fillStyle = '#f093fb';
+        // My paddle (at bottom of screen) - green
+        if (myPlayerData && myPlayerData.paddleY !== undefined) {
+            const myPaddleX = myPlayerData.paddleY * width;
+            const myPaddleY = (height - 10) * scaleY - paddleHeight;
+            ctx.fillStyle = '#4ecca3';
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#f093fb';
+            ctx.shadowColor = '#4ecca3';
             ctx.fillRect(
-                bottomPaddleX - paddleWidth / 2,
-                (height - 10) * scaleY - paddleHeight,
+                myPaddleX - paddleWidth / 2,
+                myPaddleY,
                 paddleWidth,
                 paddleHeight
             );
@@ -414,8 +432,8 @@ function render() {
         }
         
         // Draw ball
-        const ballX = ball.y * width; // Swap X and Y for vertical mode
-        const ballY = ball.x * height * scaleY;
+        const ballX = ball.y * width; // Horizontal position
+        const ballY = ballVerticalPos * height * scaleY; // Vertical position (adjusted for player perspective)
         const ballRadius = BALL_SIZE * width;
         
         ctx.fillStyle = '#ffffff';
