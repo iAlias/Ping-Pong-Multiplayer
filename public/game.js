@@ -460,12 +460,69 @@ function render() {
         const paddleWidth = PADDLE_WIDTH * width * scaleX;
         const paddleHeight = PADDLE_HEIGHT * height;
         
-        // Left paddle
-        if (!isHalfView || isLeftPlayer) {
+        if (isHalfView) {
+            // In half view, show player's paddle on their side and opponent's paddle at center
+            const myPaddleY = myPaddle.y * height;
+            const opponentPaddleY = opponentPaddle.y * height;
+            
+            if (isLeftPlayer) {
+                // Player on left: my paddle on left, opponent at center
+                // My paddle (green) on the left
+                ctx.fillStyle = '#4ecca3';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#4ecca3';
+                ctx.fillRect(
+                    10 * scaleX,
+                    myPaddleY - paddleHeight / 2,
+                    paddleWidth,
+                    paddleHeight
+                );
+                ctx.shadowBlur = 0;
+                
+                // Opponent paddle (pink) at center
+                ctx.fillStyle = '#f093fb';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#f093fb';
+                ctx.fillRect(
+                    (width / 2) * scaleX - paddleWidth,
+                    opponentPaddleY - paddleHeight / 2,
+                    paddleWidth,
+                    paddleHeight
+                );
+                ctx.shadowBlur = 0;
+            } else {
+                // Player on right: opponent at center, my paddle on right
+                // Opponent paddle (pink) at center
+                ctx.fillStyle = '#f093fb';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#f093fb';
+                ctx.fillRect(
+                    (width / 2) * scaleX,
+                    opponentPaddleY - paddleHeight / 2,
+                    paddleWidth,
+                    paddleHeight
+                );
+                ctx.shadowBlur = 0;
+                
+                // My paddle (green) on the right
+                ctx.fillStyle = '#4ecca3';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#4ecca3';
+                ctx.fillRect(
+                    (width - 10) * scaleX - paddleWidth,
+                    myPaddleY - paddleHeight / 2,
+                    paddleWidth,
+                    paddleHeight
+                );
+                ctx.shadowBlur = 0;
+            }
+        } else {
+            // Full view: show both paddles at their actual positions
+            // Left paddle
             const leftPaddleY = (isLeftPlayer ? myPaddle.y : opponentPaddle.y) * height;
-            ctx.fillStyle = '#4ecca3';
+            ctx.fillStyle = isLeftPlayer ? '#4ecca3' : '#f093fb';
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#4ecca3';
+            ctx.shadowColor = isLeftPlayer ? '#4ecca3' : '#f093fb';
             ctx.fillRect(
                 10 * scaleX,
                 leftPaddleY - paddleHeight / 2,
@@ -473,14 +530,12 @@ function render() {
                 paddleHeight
             );
             ctx.shadowBlur = 0;
-        }
-        
-        // Right paddle
-        if (!isHalfView || !isLeftPlayer) {
+            
+            // Right paddle
             const rightPaddleY = (isLeftPlayer ? opponentPaddle.y : myPaddle.y) * height;
-            ctx.fillStyle = '#f093fb';
+            ctx.fillStyle = isLeftPlayer ? '#f093fb' : '#4ecca3';
             ctx.shadowBlur = 15;
-            ctx.shadowColor = '#f093fb';
+            ctx.shadowColor = isLeftPlayer ? '#f093fb' : '#4ecca3';
             ctx.fillRect(
                 (width - 10) * scaleX - paddleWidth,
                 rightPaddleY - paddleHeight / 2,
