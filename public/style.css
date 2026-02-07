@@ -340,6 +340,7 @@ p {
     display: block;
     background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
     touch-action: none;
+    margin-bottom: 30px; /* Ensure visibility of bottom paddle */
 }
 
 #touchArea {
@@ -347,7 +348,7 @@ p {
     top: var(--scoreboard-height);
     left: env(safe-area-inset-left);
     right: env(safe-area-inset-right);
-    bottom: env(safe-area-inset-bottom);
+    bottom: 0;
     z-index: 5;
     touch-action: none;
     pointer-events: none;

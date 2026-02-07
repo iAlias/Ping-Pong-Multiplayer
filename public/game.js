@@ -393,16 +393,19 @@ function render() {
         // In vertical mode: ball.x represents vertical movement (0=top, 1=bottom)
         // ball.y represents horizontal position
         let ballVerticalPos = ball.x;
+        let ballHorizontalPos = ball.y;
         
-        // If player is on "right" side (bottom in server coords), flip the vertical position
+        // If player is on "left" side (top in server coords), flip the view
         // so they see themselves at bottom of their screen
-        if (!isLeftPlayer) {
+        if (isLeftPlayer) {
             ballVerticalPos = 1 - ball.x;
+            ballHorizontalPos = 1 - ball.y;
         }
         
         // Opponent paddle (at top of screen) -  pink/purple
         if (opponentPlayerData && opponentPlayerData.paddleY !== undefined) {
-            const opponentPaddleX = opponentPlayerData.paddleY * width;
+            // Mirror opponent X position as they are facing us
+            const opponentPaddleX = (1 - opponentPlayerData.paddleY) * width;
             ctx.fillStyle = '#f093fb';
             ctx.shadowBlur = 15;
             ctx.shadowColor = '#f093fb';
@@ -432,8 +435,8 @@ function render() {
         }
         
         // Draw ball
-        const ballX = ball.y * width; // Horizontal position
-        const ballY = ballVerticalPos * height * scaleY; // Vertical position (adjusted for player perspective)
+        const ballX = ballHorizontalPos * width;
+        const ballY = ballVerticalPos * height * scaleY;
         const ballRadius = BALL_SIZE * width;
         
         ctx.fillStyle = '#ffffff';
